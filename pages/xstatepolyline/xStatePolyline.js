@@ -115,12 +115,13 @@ const polylineMachine = createMachine(
             removeLastPoint: (context, event) => {
                 const currentPoints = polyline.points(); // Get the current points of the line
                 const size = currentPoints.length;
-                const provisoire = currentPoints.slice(size - 2, size); // Le point provisoire
-                const oldPoints = currentPoints.slice(0, size - 4); // On enlève le dernier point enregistré
-                polyline.points(oldPoints.concat(provisoire)); // Set the updated points to the line
-                layer.batchDraw(); // Redraw the layer to reflect the changes
-            },
+                if (size > 4) {
+                    const oldPoints = currentPoints.slice(0, size - 2); // On enlève le dernier point enregistré
+                    polyline.points(oldPoints); // Set the updated points to the line
+                    layer.batchDraw(); // Redraw the layer to reflect the changes
+                }
         },
+    },
         guards: {
             // On peut encore ajouter un point
             pasPlein: (context, event) => {
