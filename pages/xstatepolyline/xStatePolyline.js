@@ -16,7 +16,7 @@ let polyline // La polyline en cours de construction;
 
 const polylineMachine = createMachine(
     {
-        /** @xstate-layout N4IgpgJg5mDOIC5QAcD2AbAngGQJYDswA6XCdMAYgFkB5AVQGUBRAYWwEkWBpAbQAYAuohSpYuAC65U+YSAAeiAIwAmAMxFlAFlXKAbAFYAHAE5Vh1av3KANCEyIAtAHZ9RProNP3x3cpObjAF9A2zQsPEIiCAAnAEMAdwIoCiZ8cTBo-iEkEDQxSWlZBQRFVSciTUNlfS89TW1jFVt7BGVFQyJDTUVjNU1dQydNJydg0IwcAmIYhKTqemZaADUmLNk8iSkZHOKAjv0jPh9+-v0+fWbHar4iKy1dbVVFAz5DMdyJiOm4xPxkgCFYgBjADWsGQwLAaxyGwK21AxTOxiIxlebScyj4ik0yjal1aViIzycphJVUULj07zCk0iM1+yVojFYHG40JE+S2RUQTjKGkUVmMhn0jUaulU+IcHW6ej4-RUwpU+k01M+UyiPzmTFgQNiyChgnWok2hR2iExugqIuUTkMBiqJis+KMtz4sr8AWMjT8wRCIHwqAgcCN4SmRs5poRjl0kosHTdWmFxl5pTtulVocipHI4ZN8PkiBx+MMigqJOexm04u6uiCfppXw1sz+ubh3IQ2huOKFJgG5z4fCcMbsiBLZcaJOG7l0At9gSAA */
+        /** @xstate-layout N4IgpgJg5mDOIC5QAcD2AbAngGQJYDswA6XCdMAYgFkB5AVQGUBRAYWwEkWBpAbQAYAuohSpYuAC65U+YSAAeiAIwAmAMxFlAFlXKAbAFYAHAE5Vh1av3KANCEyIAtAHZ9RProNP3x3cpObjAF9A2zQsPEIiCAAnAEMAdwIoanpmWgA1Jn4hJBA0MUlpWQUEAMMifSM+H01dWv0+fVt7BAdlBorlLTqLRQM+Q2DQjBwCYhiEpIoAIViAYwBrWGR5sGzZfIkpGVyShuMiYwHlRSdlPkVNLsVmxHblIj6nU2fDE5c9IbyRiPG4xPwyVojFYHG461ym0KO1AJScqicGkUVmMhn0xkUGN0qlurXKmhUuj4tRUaJU+k0XzCo0iEwBySYsDmsWQa0EG1EWyKuzu7iImnRyichgMbxMVlxRgqfD0MsMAWMGL8VJ+Yyi-ymTHw4jA0QhIgK22KSgR-Le+i8ek02iVuJO5XlmLUtUMTk0TicwRCIHwqAgcA54TGHMN3Nhjl0uIcFnKMq0AvMRgtlO91N+JDIYBDXJh8kQV1xhkU-OefWM2mxBN0QVTqtpGsB2ehxtKqj4-OUqJMukMjT4fCckbsiCLJYxz3d7l0yK9gSAA */
         id: "polyLine",
         initial: "idle",
         states : {
@@ -46,7 +46,8 @@ const polylineMachine = createMachine(
                     MOUSECLICK: {
                         target: "drawing",
                         actions: "addPoint",
-                        internal: true
+                        internal: true,
+                       cond: "pasPlein"
                     },
 
                     Escape: {
@@ -56,7 +57,8 @@ const polylineMachine = createMachine(
 
                     Enter: {
                         target: "idle",
-                        actions: "saveLine"
+                        actions: "saveLine",
+                         cond: "plusDeDeuxPoints"
                     }
                 }
             }
@@ -124,7 +126,7 @@ const polylineMachine = createMachine(
             pasPlein: (context, event) => {
                 // Retourner vrai si la polyline a moins de 10 points
                 // attention : dans le tableau de points, chaque point est représenté par 2 valeurs (coordonnées x et y)
-                
+                return polyline.points().length / 2 <= MAX_POINTS;
             },
             // On peut enlever un point
             plusDeDeuxPoints: (context, event) => {
