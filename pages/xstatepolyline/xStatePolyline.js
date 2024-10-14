@@ -16,11 +16,49 @@ let polyline // La polyline en cours de construction;
 
 const polylineMachine = createMachine(
     {
-        /** @xstate-layout N4IgpgJg5mDOIC5gF8A0IB2B7CdGgAcsAbATwBkBLDMfEI2SgF0qwzoA9EBaANnVI9eAOgAM4iZMkB2ZGnokK1MMMoRitJAsYs2nRABYATAMQAOAIzCD0gJwXetgwGZezgw9ty5QA */
+        /** @xstate-layout N4IgpgJg5mDOIC5QAcD2AbAngGQJYDswA6XCdMAYgFkB5AVQGUBRAYWwEkWBpAbQAYAuohSpYuAC65U+YSAAeiAIwAmAMxFlAFlXKAbAFYAHAE5Vh1av3KANCEyIAtAHZ9RProNP3x3cpObjAF9A2zQsPEIiCAAnAEMAdwIoCiZ8cTBo-iEkEDQxSWlZBQRFVSciTUNlfS89TW1jFVt7BGVFQyJDTUVjNU1dQydNJydg0IwcAmIYhKTqemZaADUmLNk8iSkZHOKAjv0jPh9+-v0+fWbHar4iKy1dbVVFAz5DMdyJiOm4xPxkgCFYgBjADWsGQwLAaxyGwK21AxTOxiIxlebScyj4ik0yjal1aViIzycphJVUULj07zCk0iM1+yVojFYHG40JE+S2RUQTjKGkUVmMhn0jUaulU+IcHW6ej4-RUwpU+k01M+UyiPzmTFgQNiyChgnWok2hR2iExugqIuUTkMBiqJis+KMtz4sr8AWMjT8wRCIHwqAgcCN4SmRs5poRjl0kosHTdWmFxl5pTtulVocipHI4ZN8PkiBx+MMigqJOexm04u6uiCfppXw1sz+ubh3IQ2huOKFJgG5z4fCcMbsiBLZcaJOG7l0At9gSAA */
         id: "polyLine",
         initial: "idle",
         states : {
             idle: {
+                on: {
+                    MOUSECLICK: {
+                        target: "drawing",
+                        actions: "createLine",
+                    }
+                }
+            },
+
+            drawing: {
+                on: {
+                    MOUSEMOVE: {
+                        target: "drawing",
+                        actions: "setLastPoint",
+                        internal: true
+                    },
+
+                    Backspace: {
+                        target: "drawing",
+                        actions: "removeLastPoint",
+                        internal: true
+                    },
+
+                    MOUSECLICK: {
+                        target: "drawing",
+                        actions: "addPoint",
+                        internal: true
+                    },
+
+                    Escape: {
+                        target: "idle",
+                        actions: "abandon"
+                    },
+
+                    Enter: {
+                        target: "idle",
+                        actions: "saveLine"
+                    }
+                }
             }
         }
     },
@@ -66,6 +104,8 @@ const polylineMachine = createMachine(
             },
             // Abandonner le tracé de la polyline
             abandon: (context, event) => {
+                polyline.remove();
+                layer.batchDraw();
                 // Supprimer la variable polyline :
                 
             },
